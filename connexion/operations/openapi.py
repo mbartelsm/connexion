@@ -5,6 +5,7 @@ from connexion.operations.abstract import AbstractOperation
 
 from ..decorators.uri_parsing import OpenAPIURIParser
 from ..utils import deep_get, deep_merge, is_null, is_nullable, make_type
+import json
 
 logger = logging.getLogger("connexion.operations.openapi3")
 
@@ -102,7 +103,6 @@ class OpenAPIOperation(AbstractOperation):
         }
 
         self._request_body = operation.get('requestBody', {})
-
         self._parameters = operation.get('parameters', [])
         if path_parameters:
             self._parameters += path_parameters
@@ -287,8 +287,8 @@ class OpenAPIOperation(AbstractOperation):
             if x_body_name in arguments or has_kwargs:
                 return {x_body_name: body}
             return {}
-
         body_arg = deepcopy(default_body)
+        body = json.loads(body)
         body_arg.update(body or {})
 
         res = {}
